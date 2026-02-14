@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import time
 import datetime
 import requests
+import re
 
 
 
@@ -28,23 +29,30 @@ def tranform(soup):
     header = men_div.pop(0) #header of the first table
     
     table_men = []
+    table_women = []
 
     for container in men_div:
         cols = container.find_all("td")  #returns list of all columns
-        
         if not cols:
             break
+        
+        total_titles = cols[5].get_text(strip=True)
+        if total_titles:
+            titles = re.search(r"of\s+(\d+)", total_titles)
+            titles = titles.group(1)
+        else:
+            titles = 1
 
         entry = {
-            "age": cols[0].get_text(strip=True),
-            "name": cols[1].get_text(strip=True),
-            "first_tournament": cols[2].get_text(strip=True),
-            "first_title_date": cols[4].get_text(strip=True),
+            "Age": cols[0].get_text(strip=True),
+            "Name": cols[1].get_text(strip=True),
+            "First_tournament": cols[2].get_text(strip=True),
+            "First_title_date": cols[4].get_text(strip=True),
+            "Total_titles": titles,
         }
         table_men.append(entry)
 
     df = pd.DataFrame(table_men)
-    print(df) 
     
     return
 
