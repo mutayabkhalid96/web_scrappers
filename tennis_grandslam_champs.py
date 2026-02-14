@@ -38,8 +38,7 @@ def tranform(soup):
         
         total_titles = cols[5].get_text(strip=True)
         if total_titles:
-            titles = re.search(r"of\s+(\d+)", total_titles)
-            titles = titles.group(1)
+            titles = int(re.search(r"of\s+(\d+)", total_titles).group(1))
         else:
             titles = 1
 
@@ -53,7 +52,8 @@ def tranform(soup):
         table_men.append(entry)
 
     df = pd.DataFrame(table_men)
-    
+    df.sort_values(by="Total_titles", ascending=False, inplace=True)
+
     return
 
 
